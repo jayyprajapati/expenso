@@ -307,7 +307,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     final Map<String, List<TransactionModel>> grouped = {};
 
     for (var tx in transactions) {
-      final key = '${DateFormat.yMMMM().format(tx.date)}'; // e.g., "May 2025"
+      final key = DateFormat.yMMMM().format(tx.date); // e.g., "May 2025"
       if (!grouped.containsKey(key)) {
         grouped[key] = [];
       }
@@ -402,7 +402,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               ],
             ),
           );
-        }).toList(),
+        }),
       ];
     }).toList();
   }
