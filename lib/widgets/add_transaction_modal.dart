@@ -1,6 +1,7 @@
+import 'package:expenso/helpers/hive_db.dart';
+import 'package:expenso/models/transaction_model.dart';
 import 'package:flutter/material.dart';
-import '../models/transaction.dart';
-import '../helpers/db_helper.dart';
+
 import 'transaction_form.dart';
 
 Future<void> openAddTransactionModal({
@@ -14,8 +15,7 @@ Future<void> openAddTransactionModal({
     builder: (_) => TransactionForm(
       existingTransaction: existingTx,
       onSubmit: (txData) async {
-        final tx = TransactionModel(
-          id: existingTx?.id,
+        final newTx = TransactionModel(
           amount: txData['amount'],
           category: txData['category'],
           comment: txData['comment'],
@@ -23,9 +23,10 @@ Future<void> openAddTransactionModal({
         );
 
         if (existingTx != null) {
-          await DBHelper.update(tx);
+          final key = existingTx.key; // HiveObject gives us this
+          await HiveDB.update(key, newTx); // you update using key
         } else {
-          await DBHelper.insert(tx);
+          await HiveDB.add(newTx); // add new entry
         }
 
         onTransactionAdded();

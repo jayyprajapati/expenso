@@ -1,6 +1,6 @@
+import 'package:expenso/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/transaction.dart';
 
 class TransactionForm extends StatefulWidget {
   final void Function(Map<String, dynamic>) onSubmit;
