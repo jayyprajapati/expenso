@@ -1,13 +1,18 @@
+import 'package:expenso/helpers/hive_db.dart';
+import 'package:expenso/models/transaction_model.dart';
 import 'package:flutter/material.dart';
-// import '../widgets/transaction_form.dart';
-import '../helpers/db_helper.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
-import '../models/transaction.dart';
 import '../widgets/pie_chart_widget.dart';
 import '../widgets/bar_chart_widget.dart';
 import '../widgets/add_transaction_modal.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(TransactionModelAdapter());
+  await Hive.openBox<TransactionModel>('transactions');
   runApp(const PersonalFinanceApp());
 }
 
@@ -103,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _loadTransactions() async {
-    final data = await DBHelper.getAllTransactions();
+    final data = HiveDB.getAll();
     setState(() {
       _transactions = data;
     });
@@ -295,7 +300,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   }
 
   Future<void> _loadTransactions() async {
-    final data = await DBHelper.getAllTransactions();
+    final data = HiveDB.getAll();
     setState(() {
       _transactions = data;
     });
@@ -394,7 +399,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     );
                     if (confirm == true) {
-                      await DBHelper.delete(tx.id!);
+                      await HiveDB.delete(tx.key!);
                       _loadTransactions();
                     }
                   },
@@ -413,17 +418,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       onTransactionAdded: _loadTransactions,
     );
   }
-
-  // Future<void> _addTransaction(Map<String, dynamic> txData) async {
-  //   final tx = TransactionModel(
-  //     amount: txData['amount'],
-  //     category: txData['category'],
-  //     comment: txData['comment'],
-  //     date: txData['date'],
-  //   );
-  //   await DBHelper.insert(tx);
-  //   _loadTransactions(); // refresh list
-  // }
 
   @override
   Widget build(BuildContext context) {
